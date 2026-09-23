@@ -7,7 +7,7 @@ import {
   type ISupportedWallet,
 } from '@creit.tech/stellar-wallets-kit';
 import storage from './storage';
-import { WALLET_STORAGE_KEY, ADDRESS_STORAGE_KEY, NETWORK_STORAGE_KEY, STELLAR_NETWORK } from './constants';
+import { WALLET_STORAGE_KEY, ADDRESS_STORAGE_KEY, NETWORK_STORAGE_KEY, IS_MAINNET, NETWORK_PASSPHRASE } from './constants';
 import { WalletError } from './errors';
 
 export type WalletAddress = string;
@@ -17,11 +17,13 @@ export interface WalletConnection {
   networkPassphrase: string | null;
 }
 
-const NETWORK: WalletNetwork =
-  STELLAR_NETWORK === 'PUBLIC' ? WalletNetwork.PUBLIC : WalletNetwork.TESTNET;
+const NETWORK: WalletNetwork = IS_MAINNET ? WalletNetwork.PUBLIC : WalletNetwork.TESTNET;
 
-/** Network passphrase the app expects connected wallets to be using. */
-export const EXPECTED_NETWORK_PASSPHRASE: string = NETWORK;
+/**
+ * Network passphrase the app expects connected wallets to be using.
+ * Re-exported from `constants` (the single source of truth) for existing callers.
+ */
+export const EXPECTED_NETWORK_PASSPHRASE: string = NETWORK_PASSPHRASE;
 
 let _kit: StellarWalletsKit | null = null;
 
