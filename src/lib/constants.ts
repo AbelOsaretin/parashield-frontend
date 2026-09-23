@@ -15,9 +15,38 @@ if (_rawNetwork !== 'TESTNET' && _rawNetwork !== 'PUBLIC') {
 export const STELLAR_NETWORK: 'TESTNET' | 'PUBLIC' =
   _rawNetwork === 'PUBLIC' || _rawNetwork === 'MAINNET' ? 'PUBLIC' : 'TESTNET';
 
+/**
+ * Single source of truth for everything derived from the active Stellar
+ * network (#489). Import these instead of re-checking
+ * `STELLAR_NETWORK === 'PUBLIC'` in individual modules/components.
+ */
+export const IS_MAINNET = STELLAR_NETWORK === 'PUBLIC';
+
+export const NETWORK_PASSPHRASES = {
+  PUBLIC:  'Public Global Stellar Network ; September 2015',
+  TESTNET: 'Test SDF Network ; September 2015',
+} as const;
+
+/** Passphrase transactions are built/signed with and wallets must match. */
+export const NETWORK_PASSPHRASE: string = NETWORK_PASSPHRASES[STELLAR_NETWORK];
+
+/** Human-readable name of the app's network. */
+export const NETWORK_LABEL = IS_MAINNET ? 'Mainnet' : 'Testnet';
+
+/** Human-readable name for an arbitrary wallet-reported passphrase. */
+export function networkLabelForPassphrase(passphrase: string | null): string {
+  if (passphrase === NETWORK_PASSPHRASES.PUBLIC)  return 'Mainnet';
+  if (passphrase === NETWORK_PASSPHRASES.TESTNET) return 'Testnet';
+  return 'an unsupported network';
+}
+
+export const EXPLORER_TX_BASE_URL = IS_MAINNET
+  ? 'https://stellar.expert/explorer/public/tx/'
+  : 'https://stellar.expert/explorer/testnet/tx/';
+
 export const SOROBAN_RPC_URL =
   process.env.NEXT_PUBLIC_SOROBAN_RPC_URL ??
-  (STELLAR_NETWORK === 'PUBLIC'
+  (IS_MAINNET
     ? 'https://soroban.stellar.org'
     : 'https://soroban-testnet.stellar.org');
 
