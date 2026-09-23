@@ -1,9 +1,7 @@
 'use client';
 
 import { useWalletContext } from '@/context/WalletContext';
-import { STELLAR_NETWORK } from '@/lib/constants';
-
-const PUBLIC_PASSPHRASE = 'Public Global Stellar Network ; September 2015';
+import { IS_MAINNET, NETWORK_PASSPHRASES } from '@/lib/constants';
 
 export function NetworkBanner() {
   const { connected, networkPassphrase } = useWalletContext();
@@ -12,8 +10,8 @@ export function NetworkBanner() {
   // After connecting, use the wallet's actual network passphrase to
   // avoid a flash of the wrong banner.
   const isPublic = connected && networkPassphrase
-    ? networkPassphrase === PUBLIC_PASSPHRASE
-    : STELLAR_NETWORK === 'PUBLIC';
+    ? networkPassphrase === NETWORK_PASSPHRASES.PUBLIC
+    : IS_MAINNET;
 
   if (isPublic) return null;
 

@@ -5,19 +5,8 @@ import { connectWallet, disconnectWallet, getStoredAddress, getConnectedAddress,
 import { toUserMessage } from '@/lib/errors';
 import { fetchChallenge, login, setAuthErrorHandler } from '@/lib/api';
 import storage from '@/lib/storage';
-import { AUTH_TOKEN_STORAGE_KEY, STELLAR_NETWORK } from '@/lib/constants';
+import { AUTH_TOKEN_STORAGE_KEY, NETWORK_LABEL, networkLabelForPassphrase } from '@/lib/constants';
 import type { WalletState } from '@/types';
-
-const TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
-const PUBLIC_PASSPHRASE  = 'Public Global Stellar Network ; September 2015';
-
-function networkLabel(passphrase: string | null): string {
-  if (passphrase === PUBLIC_PASSPHRASE)  return 'Mainnet';
-  if (passphrase === TESTNET_PASSPHRASE) return 'Testnet';
-  return 'an unsupported network';
-}
-
-const APP_NETWORK_LABEL = STELLAR_NETWORK === 'PUBLIC' ? 'Mainnet' : 'Testnet';
 
 interface WalletContextValue {
   address:           string | null;
@@ -56,7 +45,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       if (networkPassphrase && networkPassphrase !== EXPECTED_NETWORK_PASSPHRASE) {
         disconnect();
         setError(
-          `Your wallet is connected to ${networkLabel(networkPassphrase)} but this app runs on ${APP_NETWORK_LABEL}. Switch your wallet network and try again.`,
+          `Your wallet is connected to ${networkLabelForPassphrase(networkPassphrase)} but this app runs on ${NETWORK_LABEL}. Switch your wallet network and try again.`,
         );
         return;
       }
